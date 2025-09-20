@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { Search, TrendingUp, Users, DollarSign, ArrowRight } from 'lucide-react'
+import { Search, TrendingUp, Users, DollarSign, ArrowRight, Sparkles } from 'lucide-react'
 import Button from './ui/Button'
 import InputWithSuggestions from './ui/InputWithSuggestions'
 import FeatureCard from './ui/FeatureCard'
 import Tag from './ui/Tag'
 import { useNiche } from '../context/NicheContext'
+import { generateNiches } from '../services/api'
 
 const NicheDiscovery = () => {
   const [searchQuery, setSearchQuery] = useState('')
@@ -16,60 +17,32 @@ const NicheDiscovery = () => {
     
     setIsSearching(true)
     
-    // Simulate AI-powered search with realistic delay
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    // Mock AI-generated niche ideas
-    const mockNiches = [
-      {
-        id: 1,
-        name: "AI-Powered Personal Finance for Freelancers",
-        description: "Help freelancers manage irregular income with AI-driven budgeting and tax planning tools.",
-        painPoints: ["Irregular income", "Tax complexity", "No financial planning"],
-        targetAudience: "Freelancers earning $30k-$100k annually",
-        trends: ["AI automation", "Gig economy growth", "Financial wellness"],
-        validationScore: 85,
-        marketSize: "Medium",
-        competition: "Low",
-        monetizationPotential: "High"
-      },
-      {
-        id: 2,
-        name: "Sustainable Cooking for Busy Parents",
-        description: "Zero-waste meal planning and eco-friendly cooking solutions for time-strapped families.",
-        painPoints: ["Food waste", "Meal planning", "Sustainability guilt"],
-        targetAudience: "Parents aged 25-40 with environmental concerns",
-        trends: ["Sustainability", "Health consciousness", "Time efficiency"],
-        validationScore: 78,
-        marketSize: "Large",
-        competition: "Medium",
-        monetizationPotential: "Medium"
-      },
-      {
-        id: 3,
-        name: "Remote Team Wellness Platform",
-        description: "Mental health and wellness tools specifically designed for distributed teams.",
-        painPoints: ["Remote isolation", "Team bonding", "Wellness tracking"],
-        targetAudience: "Remote teams at SMBs (10-100 employees)",
-        trends: ["Remote work", "Mental health awareness", "Team productivity"],
-        validationScore: 92,
-        marketSize: "Large",
-        competition: "Medium",
-        monetizationPotential: "High"
-      }
-    ]
-    
-    setDiscoveredNiches(mockNiches)
-    setIsSearching(false)
+    try {
+      // Use real API to generate niches with web search data
+      const niches = await generateNiches(searchQuery)
+      setDiscoveredNiches(niches)
+    } catch (error) {
+      console.error('Error generating niches:', error)
+      // Show user-friendly error message
+      setDiscoveredNiches([])
+    } finally {
+      setIsSearching(false)
+    }
   }
 
   const suggestions = [
     "AI automation",
-    "Sustainability",
-    "Remote work",
-    "Health & wellness",
-    "Productivity tools",
-    "Financial planning"
+    "Cybersecurity",
+    "Virtual reality",
+    "Blockchain technology",
+    "Neural interfaces",
+    "Quantum computing",
+    "Biotech innovation",
+    "Space technology",
+    "Robotics",
+    "Digital twins",
+    "Metaverse",
+    "Synthetic biology"
   ]
 
   return (
@@ -83,11 +56,11 @@ const NicheDiscovery = () => {
         </div>
 
         {/* Search Interface */}
-        <div className="bg-surface rounded-lg shadow-card p-6 mb-8">
+        <div className="bg-surface rounded-lg shadow-cardGlow border border-borderGlow/30 p-6 mb-8 cyber-grid scan-lines">
           <InputWithSuggestions
             value={searchQuery}
             onChange={setSearchQuery}
-            placeholder="Enter interests, trends, or industries (e.g., AI, sustainability, remote work)"
+            placeholder="Enter futuristic interests or emerging technologies..."
             suggestions={suggestions}
             icon={Search}
           />
@@ -97,9 +70,19 @@ const NicheDiscovery = () => {
               size="lg"
               onClick={handleSearch}
               disabled={isSearching || !searchQuery.trim()}
-              className="min-w-48"
+              className="min-w-48 neon-border animate-glow-pulse"
             >
-              {isSearching ? 'Analyzing Trends...' : 'Discover Niches'}
+              {isSearching ? (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2 animate-spin" />
+                  Quantum Analysis...
+                </>
+              ) : (
+                <>
+                  <Search className="w-4 h-4 mr-2" />
+                  Discover Niches
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -107,24 +90,25 @@ const NicheDiscovery = () => {
         {/* Results */}
         {discoveredNiches.length > 0 && (
           <div className="space-y-6 animate-slide-up">
-            <h3 className="text-subheadline text-textPrimary">
-              Found {discoveredNiches.length} promising niches
+            <h3 className="text-subheadline text-textPrimary neon-text">
+              <span className="gradient-text">Found {discoveredNiches.length} quantum niches</span>
             </h3>
             
             <div className="grid gap-6">
-              {discoveredNiches.map((niche) => (
+              {discoveredNiches.map((niche, index) => (
                 <FeatureCard
                   key={niche.id}
                   variant="default"
-                  className="p-6"
+                  className="p-6 bg-surfaceGlow border border-borderGlow/40 shadow-cardGlow hover:shadow-primaryGlow transition-all duration-300 animate-float"
+                  style={{ animationDelay: `${index * 0.2}s` }}
                 >
                   <div className="flex flex-col lg:flex-row lg:items-start gap-6">
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-4">
-                        <h4 className="text-lg font-semibold text-textPrimary">{niche.name}</h4>
+                        <h4 className="text-lg font-semibold text-textPrimary neon-text">{niche.name}</h4>
                         <div className="flex items-center space-x-2 ml-4">
-                          <Tag variant="info" className="whitespace-nowrap">
-                            {niche.validationScore}% Match
+                          <Tag variant="info" className="whitespace-nowrap bg-primary/20 text-primary border-primary/50 neon-border">
+                            {niche.validationScore}% Neural Match
                           </Tag>
                         </div>
                       </div>
@@ -133,38 +117,52 @@ const NicheDiscovery = () => {
                       
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
-                          <h5 className="font-medium text-textPrimary mb-2">Pain Points</h5>
+                          <h5 className="font-medium text-textAccent mb-2">System Errors</h5>
                           <div className="flex flex-wrap gap-2">
                             {niche.painPoints.map((pain, index) => (
-                              <Tag key={index} variant="warning">{pain}</Tag>
+                              <Tag key={index} variant="warning" className="bg-error/20 text-error border-error/50">{pain}</Tag>
                             ))}
                           </div>
                         </div>
                         
                         <div>
-                          <h5 className="font-medium text-textPrimary mb-2">Trending Topics</h5>
+                          <h5 className="font-medium text-textAccent mb-2">Neural Patterns</h5>
                           <div className="flex flex-wrap gap-2">
                             {niche.trends.map((trend, index) => (
-                              <Tag key={index} variant="info">{trend}</Tag>
+                              <Tag key={index} variant="info" className="bg-secondary/20 text-secondary border-secondary/50">{trend}</Tag>
                             ))}
                           </div>
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                         <div className="flex items-center space-x-2">
-                          <Users className="w-4 h-4 text-textSecondary" />
-                          <span className="text-textSecondary">Market: {niche.marketSize}</span>
+                          <Users className="w-4 h-4 text-secondary" />
+                          <span className="text-textSecondary">Matrix: {niche.marketSize}</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <TrendingUp className="w-4 h-4 text-textSecondary" />
-                          <span className="text-textSecondary">Competition: {niche.competition}</span>
+                          <TrendingUp className="w-4 h-4 text-accent" />
+                          <span className="text-textSecondary">Resistance: {niche.competition}</span>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <DollarSign className="w-4 h-4 text-textSecondary" />
-                          <span className="text-textSecondary">Revenue: {niche.monetizationPotential}</span>
+                          <DollarSign className="w-4 h-4 text-success" />
+                          <span className="text-textSecondary">Credits: {niche.monetizationPotential}</span>
                         </div>
                       </div>
+
+                      {/* Show search data if available */}
+                      {niche.searchData && niche.searchData.length > 0 && (
+                        <div className="mt-4 pt-4 border-t border-borderGlow/30">
+                          <h5 className="font-medium text-textAccent mb-2 text-sm">Real-time Intel</h5>
+                          <div className="space-y-1">
+                            {niche.searchData.slice(0, 2).map((data, index) => (
+                              <div key={index} className="text-xs text-textSecondary/80 truncate">
+                                • {data.title}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                     
                     <div className="flex flex-col space-y-2 lg:min-w-0">
@@ -172,16 +170,16 @@ const NicheDiscovery = () => {
                         variant="primary" 
                         size="sm"
                         onClick={() => saveNiche(niche)}
-                        className="w-full lg:w-auto"
+                        className="w-full lg:w-auto neon-border animate-glow-pulse"
                       >
-                        Save Niche
+                        Archive Data
                       </Button>
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className="w-full lg:w-auto"
+                        className="w-full lg:w-auto border-secondary/50 text-secondary hover:bg-secondary/10"
                       >
-                        View Details
+                        Deep Scan
                         <ArrowRight className="w-4 h-4 ml-2" />
                       </Button>
                     </div>
@@ -195,11 +193,11 @@ const NicheDiscovery = () => {
         {/* Empty State */}
         {discoveredNiches.length === 0 && !isSearching && (
           <div className="text-center py-12">
-            <div className="w-16 h-16 bg-input rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-textSecondary" />
+            <div className="w-16 h-16 bg-surface border-2 border-borderGlow/50 rounded-full flex items-center justify-center mx-auto mb-4 animate-glow-pulse">
+              <Search className="w-8 h-8 text-secondary" />
             </div>
-            <h3 className="text-lg font-medium text-textPrimary mb-2">Ready to discover niches?</h3>
-            <p className="text-textSecondary">Enter your interests above to get started with AI-powered niche discovery.</p>
+            <h3 className="text-lg font-medium text-textPrimary mb-2 neon-text">Neural Network Ready</h3>
+            <p className="text-textSecondary">Initialize quantum search protocols to discover emerging niches...</p>
           </div>
         )}
       </div>
