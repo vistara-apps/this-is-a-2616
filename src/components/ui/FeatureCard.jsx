@@ -8,11 +8,11 @@ const FeatureCard = ({
   onClick,
   ...props 
 }) => {
-  const baseClasses = 'bg-surface rounded-lg transition-all duration-200'
+  const baseClasses = 'bg-surface/80 backdrop-blur-sm rounded-lg transition-all duration-300 hover:transform hover:scale-[1.02]'
   
   const variants = {
-    default: 'border border-border shadow-card hover:shadow-lg',
-    highlighted: 'border-2 border-primary shadow-card hover:shadow-lg'
+    default: 'border border-borderGlow/30 shadow-card hover:shadow-cardGlow hover:border-borderGlow/50',
+    highlighted: 'border-2 border-primary/50 shadow-primaryGlow hover:shadow-primaryGlow hover:border-primary'
   }
   
   return (
